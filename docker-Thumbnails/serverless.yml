@@ -40,16 +40,7 @@ resources:
       DeletionPolicy: Retain
       Properties:
         BucketName: ${self:provider.stage}
-# Resources:
-#       S3Bucket:
-#         Type: AWS::S3::Bucket
-#         Properties:
-#           BucketName: "${self:service}-${opt:stage, self:provider.stage}"
-#           BucketEncryption:
-#             ServerSideEncryptionConfiguration:
-#               - ServerSideEncryptionByDefault:
-#                   SSEAlgorithm: 'aws:kms'
-#                   KMSMasterKeyID: "aws:kms:${self:provider.region}:#{AWS::AKIAJMAXE6O2XBRWPUDA}:xFZCtXG8t8eiGCNP/NYJoEx0CrWjo0Yl9WqhvX6W/${self:custom.kms.${self:provider.stage}}"
+
 
 plugins:
   - serverless-python-requirements
