@@ -1,24 +1,34 @@
-import json
+import boto3
 
+ec2 = boto3.client('ec2')
 
-def hello(event, context):
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event
-    }
+def start_ec2(event, context):
+    print(event)
 
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
-
+    ec2_instances = get_all_ec2_ids()
+    response = ec2.start_instances(
+        InstanceIds=ec2_instances,
+        DryRun=False
+    )
     return response
 
-    # Use this code if you don't use the http event with the LAMBDA-PROXY
-    # integration
-    """
-    return {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "event": event
-    }
-    """
+
+def stop_ec2(event, context):
+    print(event)
+
+    ec2_instances = get_all_ec2_ids()
+    response = ec2.stop_instances(
+        InstanceIds=ec2_instances,
+        DryRun=False
+    )
+    return response
+
+
+def get_all_ec2_ids():
+    response = ec2.describe_instances(DryRun=False)
+    instances = []
+
+    for reservation in response["Reservations"]:
+        for instance in reservation["Instances"]:
+            instances.append(instance["InstanceId"])
+    return instances
