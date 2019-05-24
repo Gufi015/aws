@@ -13,9 +13,9 @@ dynamoDb = boto3.resource('dynamodb')
 def create(event, context):
     data = json.loads(event['body'])
 
-    # if 'nombre' and 'apellidos' and 'edad' and 'email' not in data:
-    #     logging.error('Validacion fallida')
-    #     raise Exception("No se creó el elemento")
+    if 'nombre' not in data:
+        logging.error('Validacion fallida')
+        raise Exception("No se creó el elemento")
 
     timestamp = int(time.time() * 1000)
 
@@ -24,9 +24,6 @@ def create(event, context):
     item = {
         'id': str(uuid.uuid1()),
         'nombre': data['nombre'],
-        'apellidos': data['apellidos'],
-        'edad': data['edad'],
-        'email': data['email'],
         'checked': False,
         'creado': timestamp,
         'actualizado': timestamp
