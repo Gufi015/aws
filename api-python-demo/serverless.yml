@@ -1,4 +1,8 @@
-service: api-paython # NOTE: update this with your service name
+service: api-python-demo # NOTE: update this with your service name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
 
 frameworkVersion: ">=1.1.0 <2.0.0"
 
@@ -7,7 +11,7 @@ provider:
   runtime: python2.7
   profile: serverless-admin
   environment:
-    python_users: ${self:service}-${opt:stage, self:provider.stage}
+    python: ${self:service}-${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -17,52 +21,27 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.python_users}"
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.python}"
 
 functions:
   create:
-    handler: create.create
+    handler: todos/create.create
     events:
       - http:
-          path: /
+          path: todos
           method: post
           cors: true
 
   list:
-    handler: list.list
+    handler: todos/lista.lista
     events:
       - http:
-          path: /
+          path: todos
           method: get
           cors: true
-
-  get:
-    handler: get.get
-    events:
-      - http:
-          path: /{id}
-          method: get
-          cors: true
-
-  update:
-    handler: update.update
-    events:
-      - http:
-          path: /{id}
-          method: put
-          cors: true
-
-  delete:
-    handler: todos/delete.delete
-    events:
-      - http:
-          path: /{id}
-          method: delete
-          cors: true
-
 resources:
   Resources:
-    pythonDynamodb:
+    python:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
       Properties:
@@ -77,4 +56,4 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:provider.environment.python_users}
+        TableName: ${self:provider.environment.python}

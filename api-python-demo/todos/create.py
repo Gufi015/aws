@@ -1,36 +1,38 @@
 import json
-import os
 import logging
-import uuid
+import os
 import time
+import uuid
 
 import boto3
-
-
-dynamoDb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 
 
 def create(event, context):
     data = json.loads(event['body'])
-
     if 'nombre' not in data:
-        logging.error('Validacion fallida')
-        raise Exception("No se creó el elemento")
+        logging.error("Validation Failed")
+        raise Exception("Couldn't create the todo item.")
 
     timestamp = int(time.time() * 1000)
 
-    table = dynamoDb.Table(os.environ('python_users'))
+    table = dynamodb.Table(os.environ['python'])
 
     item = {
         'id': str(uuid.uuid1()),
         'nombre': data['nombre'],
+        'apellidos': data['apellidos'],
+        'edad': data['edad'],
+        'email': data['email'],
         'checked': False,
-        'creado': timestamp,
-        'actualizado': timestamp
+        'createdAt': timestamp,
+        'updatedAt': timestamp,
     }
 
+    # write the todo to the database
     table.put_item(Item=item)
 
+    # create a response
     response = {
         "statusCode": 200,
         "body": json.dumps(item)
