@@ -14,7 +14,7 @@ module.exports.create = (event, context, callback) => {
     const time = new Date().getTime();
     const data = JSON.parse(event.body);
     
-    if(typeof data !== 'string'){
+    if(typeof data.name !== 'string'){
         console.log('validación error');
 
         callback(null, {
