@@ -9,29 +9,33 @@ import {Http, Headers} from "@angular/http";
 })
 export class GetEmployeesComponent implements OnInit {
 
+  employees:any=[];
   constructor(private http: Http, private auth: AuthService) { }
 
   ngOnInit() {
 
-    this.auth.getAuthenticatedUser().getSession( (err, session) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      const token = session.getIdToken().getJwtToken();
-      const headers = new Headers();
-      headers.append('Authorization', token);
-      this.http.get('https://raselh0uc1.execute-api.us-east-1.amazonaws.com/v1/employees', {headers: headers})
-        .subscribe(
-          response => {
+    // this.auth.getAuthenticatedUser().getSession( (err, session) => {
+    //   if (err) {
+    //     console.log(err);
+    //     return;
+    //   }
+      //const token = session.getIdToken().getJwtToken();
+      //const headers = new Headers();
+      //headers.append('Authorization', token);
+      // {headers: headers}
+      this.http.get('https://4w602k7m0h.execute-api.us-east-1.amazonaws.com/dev/employees')
+        .subscribe((response) => {
             console.log(response);
+            const empleados = response
+            this.employees = empleados['_body'];
+            console.log('esta es la respuesta' + JSON.stringify(this.employees));
           },
           error => {
             console.log(error);
           }
         );
 
-    });
+    //});
 
 
 

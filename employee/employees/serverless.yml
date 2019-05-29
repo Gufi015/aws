@@ -1,0 +1,81 @@
+
+
+service: employees 
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  profile: serverless-admin
+  environment:
+    employees: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.employees}"
+
+functions:
+  create:
+    handler: employee/create.create
+    events:
+      - http:
+          path: employee
+          method: post
+          cors: true
+
+  list:
+    handler: employee/list.list
+    events:
+      - http:
+          path: employee
+          method: get
+          cors: true
+
+  get:
+    handler: employee/get.get
+    events:
+      - http:
+          path: employee/{id}
+          method: get
+          cors: true
+
+  update:
+    handler: employee/update.update
+    events:
+      - http:
+          path: employee/{id}
+          method: put
+          cors: true
+
+  delete:
+    handler: employee/delete.delete
+    events:
+      - http:
+          path: employee/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    employee:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.employee}
