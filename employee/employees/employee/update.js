@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const AWS = require('aws-sdk');
 
@@ -9,12 +9,12 @@ module.exports.update = (event, context, callback) => {
   const data = JSON.parse(event.body);
 
   // validation
-  if (typeof data !== 'string' || typeof data.checked !== 'boolean') {
-    console.error('Validation Failed');
+  if (typeof data.name !== 'string' ||  typeof data.checked !== 'boolean') {
+    console.error('Validation Failed'+ error);
     callback(null, {
       statusCode: 400,
       headers: { 'Content-Type': 'application/json' },
-      body: "Couldn't update the item."
+      body: "No se actualizo el item."
     });
     return;
   }
@@ -25,19 +25,20 @@ module.exports.update = (event, context, callback) => {
       id: event.pathParameters.id
     },
     ExpressionAttributeNames: {
-      '#employee': 'name'
+      '#employee': 'name',
     },
     ExpressionAttributeValues: {
       ':name': data.name,
+      ':age': data.age,
+      ':mail': data.mail,
       ':checked': data.checked,
-      ':updatedAt': timestamp
+      ':updateAt': time
     },
-    UpdateExpression: 'SET #employee = :name, checked = :checked, updatedAt = :updatedAt',
+    UpdateExpression: 'SET #employee = :name, age = :age, mail = :mail,  checked = :checked, updateAt = :updateAt',
     ReturnValues: 'ALL_NEW'
-  }
+  };
 
-  // update the todo in the database
-  dynamoDb.update(params, (error, result) => {
+  dynamodb.update(params, (error, result) => {
     // handle potential errors
     if (error) {
       console.error(error);
@@ -47,13 +48,14 @@ module.exports.update = (event, context, callback) => {
         body: "Couldn't fetch the employee item."
       });
       return;
-    }
+    };
 
     // create a response
     const response = {
       statusCode: 200,
       body: JSON.stringify(result.Attributes)
     };
+    console.log(response);
     callback(null, response);
   });
 };
