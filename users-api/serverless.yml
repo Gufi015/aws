@@ -1,0 +1,58 @@
+
+service: users-api # NOTE: update this with your service name
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  profile: serverless-admin
+  environment: 
+    USUARIOS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.USUARIOS_TABLE}"
+
+
+functions:
+  post:
+    handler: api/post.post
+    events:
+      - http:
+          path: api
+          method: post
+          cors: true
+  get:
+    handler: api/get.get
+    events:
+      - http:
+          path: api
+          method: get
+          cors: true
+          
+resources:
+  Resources:
+    ApiDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.USUARIOS_TABLE}
+
