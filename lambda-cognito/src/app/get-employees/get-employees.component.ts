@@ -23,12 +23,14 @@ export class GetEmployeesComponent implements OnInit {
       //const headers = new Headers();
       //headers.append('Authorization', token);
       // {headers: headers}
-      this.http.get('https://4w602k7m0h.execute-api.us-east-1.amazonaws.com/dev/employees')
-        .subscribe((response) => {
+      this.http
+        .get(
+          "https://f8t05efwi6.execute-api.us-east-1.amazonaws.com/dev-01"
+        )
+        .subscribe(
+          response => {
             console.log(response);
-            const empleados = response
-            this.employees = empleados['_body'];
-            console.log('esta es la respuesta' + JSON.stringify(this.employees));
+            console.log("hula");
           },
           error => {
             console.log(error);

@@ -53,6 +53,7 @@ module.exports.update = (event, context, callback) => {
     // create a response
     const response = {
       statusCode: 200,
+      headers:{'Content-Type':'application/json', "Access-Control-Allow-Origin": "*"},
       body: JSON.stringify(result.Attributes)
     };
     console.log(response);
