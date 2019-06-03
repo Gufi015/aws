@@ -82,6 +82,7 @@ export class AuthService {
   }
 
   signOut() {
+    this.getAuthenticatedUser().signOut();
   }
 
 }

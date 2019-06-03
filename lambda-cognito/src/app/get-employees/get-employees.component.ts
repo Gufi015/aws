@@ -14,18 +14,17 @@ export class GetEmployeesComponent implements OnInit {
 
   ngOnInit() {
 
-    // this.auth.getAuthenticatedUser().getSession( (err, session) => {
-    //   if (err) {
-    //     console.log(err);
-    //     return;
-    //   }
-      //const token = session.getIdToken().getJwtToken();
-      //const headers = new Headers();
-      //headers.append('Authorization', token);
-      // {headers: headers}
+    this.auth.getAuthenticatedUser().getSession( (err, session) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      const token = session.getIdToken().getJwtToken();
+      const headers = new Headers();
+      headers.append("Authorization", token);
       this.http
         .get(
-          "https://f8t05efwi6.execute-api.us-east-1.amazonaws.com/dev-01"
+          "https://f8t05efwi6.execute-api.us-east-1.amazonaws.com/dev-01/", {headers: headers}
         )
         .subscribe(
           response => {
@@ -37,7 +36,7 @@ export class GetEmployeesComponent implements OnInit {
           }
         );
 
-    //});
+    });
 
 
 
